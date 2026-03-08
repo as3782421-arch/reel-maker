@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REELMARK — Your Cinema Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=Bricolage+Grotesque:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0905;
+    --bg2: #111009;
+    --bg3: #1a1810;
+    --gold: #c9a84c;
+    --gold2: #e8c97a;
+    --cream: #f0e8d5;
+    --red: #c0392b;
+    --muted: #6b6454;
+    --border: #2a2618;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ======= NAV ======= */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.4rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,9,5,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .logo span {
+    color: var(--cream);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.2s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-log {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 0.55rem 1.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .btn-log:hover { background: var(--gold2); transform: translateY(-1px); }
+
+  /* ======= HERO ======= */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 88vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    padding: 6rem 4rem 4rem 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1.8rem;
+    color: var(--cream);
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 440px;
+    margin-bottom: 3rem;
+    font-weight: 300;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 0.9rem 2.2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.25); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid var(--border);
+    padding: 0.9rem 2.2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-item { display: flex; flex-direction: column; gap: 0.2rem; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .film-strip {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    animation: scrollStrip 25s linear infinite;
+  }
+
+  .film-strip-row {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    border-top: 3px solid var(--bg);
+    border-bottom: 3px solid var(--bg);
+  }
+
+  .film-card {
+    flex-shrink: 0;
+    width: 130px;
+    height: 190px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .film-card-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.7rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 50%);
+    position: relative;
+  }
+
+  .film-card-bg {
+    position: absolute;
+    inset: 0;
+    font-size: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.15;
+  }
+
+  .film-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.68rem;
+    color: var(--cream);
+    text-align: center;
+    line-height: 1.3;
+    position: relative;
+    z-index: 1;
+  }
+
+  .film-card-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--gold);
+    position: relative;
+    z-index: 1;
+    margin-top: 2px;
+  }
+
+  .film-card-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    z-index: 1;
+  }
+
+  .badge-movie { background: var(--red); color: white; }
+  .badge-series { background: #1a5276; color: white; }
+  .badge-anime { background: #7d3c98; color: white; }
+
+  @keyframes scrollStrip {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+
+  .hero-right-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, var(--bg) 0%, transparent 30%, transparent 70%, var(--bg) 100%),
+                linear-gradient(to bottom, var(--bg) 0%, transparent 15%, transparent 85%, var(--bg) 100%);
+    z-index: 2;
+  }
+
+  /* ======= LOG MODAL / PANEL ======= */
+  .log-section {
+    padding: 5rem 5rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+  }
+
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--cream);
+  }
+
+  /* Log form */
+  .log-form-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .log-form {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+  }
+
+  .form-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .form-tab {
+    padding: 0.7rem 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--muted);
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+
+  .form-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .form-tab:hover { color: var(--cream); }
+
+  .form-group { margin-bottom: 1.5rem; }
+
+  .form-label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    padding: 0.8rem 1rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--gold);
+  }
+
+  .form-input::placeholder { color: var(--muted); }
+
+  .form-select option { background: var(--bg); }
+
+  .form-textarea { resize: none; height: 80px; }
+
+  .rating-stars {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+  }
+
+  .star {
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: var(--border);
+    transition: color 0.15s, transform 0.1s;
+    user-select: none;
+  }
+
+  .star:hover, .star.active { color: var(--gold); transform: scale(1.1); }
+
+  .photo-upload {
+    border: 2px dashed var(--border);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+
+  .photo-upload:hover { border-color: var(--gold); }
+
+  .photo-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+  .photo-upload-icon { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; }
+
+  .photo-upload-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 1rem;
+    transition: all 0.2s;
+  }
+
+  .btn-submit:hover { background: var(--gold2); }
+
+  /* Quick add checklist panel */
+  .quick-add {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .quick-add-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+
+  .quick-add-sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+
+  .checklist-item:last-child { border-bottom: 1px solid var(--border); }
+  .checklist-item:hover { background: var(--bg3); }
+
+  .checklist-item.checked { background: rgba(201,168,76,0.05); }
+
+  .check-box {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--muted);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-size: 0.8rem;
+  }
+
+  .checklist-item.checked .check-box {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--bg);
+  }
+
+  .checklist-info { flex: 1; }
+
+  .checklist-name {
+    font-size: 0.9rem;
+    color: var(--cream);
+    font-weight: 500;
+  }
+
+  .checklist-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .checklist-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    text-transform: uppercase;
+  }
+
+  /* ======= FEED ======= */
+  .feed-section {
+    padding: 5rem;
+  }
+
+  .feed-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 0.4rem 1.2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  .filter-btn:hover:not(.active) { border-color: var(--gold); color: var(--cream); }
+
+  .feed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5px;
+  }
+
+  .feed-item {
+    position: relative;
+    aspect-ratio: 2/3;
+    background: var(--bg3);
+    overflow: hidden;
+    cursor: pointer;
+    
+  }
+
+  .feed-item-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    opacity: 0.08;
+    transition: transform 0.4s, opacity 0.4s;
+  }
+
+  .feed-item:hover .feed-item-bg { transform: scale(1.1); opacity: 0.14; }
+
+  .feed-item-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.2rem;
+    transition: opacity 0.3s;
+  }
+
+  .feed-item-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+  }
+
+  .feed-item-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+
+  .feed-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .feed-item-stars {
+    color: var(--gold);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+
+  .feed-item-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    padding: 1px 6px;
+    text-transform: uppercase;
+  }
+
+  .feed-hover-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-top: 0.5rem;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all 0.3s;
+  }
+
+  .feed-item:hover .feed-hover-note { opacity: 1; transform: translateY(0); }
+
+  /* ======= MEMORIES / GLANCE ======= */
+  .memories-section {
+    padding: 5rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+
+  .memories-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    margin-top: 3rem;
+  }
+
+  .memory-block {
+    background: var(--bg3);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .memory-block-large { grid-row: span 2; }
+
+  .memory-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .memory-big-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .memory-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .memory-bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .bar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    width: 55px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    position: relative;
+  }
+
+  .bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--gold);
+    transition: width 1.5s ease;
+  }
+
+  .bar-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    width: 25px;
+    flex-shrink: 0;
+  }
+
+  .memory-recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .memory-recent-item {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .memory-recent-item:last-child { border-bottom: none; }
+
+  .memory-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .memory-recent-title {
+    font-size: 0.82rem;
+    color: var(--cream);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .memory-recent-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  .genre-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.2rem;
+  }
+
+  .genre-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .genre-pill.top { border-color: var(--gold); color: var(--gold); }
+
+  /* ======= FOOTER ======= */
+  footer {
+    padding: 3rem 5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .footer-coming-soon {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-align: center;
+    border: 1px dashed var(--border);
+    padding: 0.5rem 1.5rem;
+  }
+
+  .footer-coming-soon span { color: var(--gold); }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ======= MODAL ======= */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    width: 90%;
+    max-width: 520px;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--cream); }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .modal-sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow { animation: fadeInUp 0.6s ease both; }
+  .hero-title { animation: fadeInUp 0.7s 0.1s ease both; }
+  .hero-sub { animation: fadeInUp 0.7s 0.2s ease both; }
+  .hero-cta { animation: fadeInUp 0.7s 0.3s ease both; }
+  .hero-stats { animation: fadeInUp 0.7s 0.4s ease both; }
+
+  /* Notification toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--bg3);
+    border: 1px solid var(--gold);
+    padding: 1rem 1.5rem;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transform: translateX(120%);
+    transition: transform 0.3s;
+    max-width: 320px;
+  }
+
+  .toast.show { transform: translateX(0); }
+
+  .toast-icon { color: var(--gold); font-size: 1.2rem; }
+
+  .toast-text { font-size: 0.82rem; color: var(--cream); line-height: 1.4; }
+
+  .toast-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.2rem;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Reel<span>mark</span></div>
+  <ul class="nav-links">
+    <li><a href="#" class="active">Feed</a></li>
+    <li><a href="#log-section">Log</a></li>
+    <li><a href="#memories">Memories</a></li>
+    <li><a href="#">Discover</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-log" onclick="openModal()">+ Log Today</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Your Personal Cinema Journal</div>
+    <h1 class="hero-title">Every Frame<br>You've <em>Lived</em><br>Remembered.</h1>
+    <p class="hero-sub">Log the movies, series, and anime you watch. Build a lifetime record of your visual journey — and get beautiful memories of everything you've ever experienced on screen.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="openModal()">Start Logging</button>
+      <button class="btn-ghost" onclick="document.getElementById('feed-section').scrollIntoView({behavior:'smooth'})">See Your Feed</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" id="total-watched">0</span>
+        <span class="stat-label">Logged</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="total-hours">0</span>
+        <span class="stat-label">Hours Watched</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="total-genres">0</span>
+        <span class="stat-label">Genres Explored</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="film-strip" id="filmStrip"></div>
+    <div class="hero-right-overlay"></div>
+  </div>
+</section>
+
+<!-- LOG SECTION -->
+<section class="log-section" id="log-section">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">Add to your journal</div>
+      <h2 class="section-title">Log What You Watched</h2>
+    </div>
+  </div>
+
+  <div class="log-form-wrapper">
+    <!-- Form -->
+    <div class="log-form">
+      <div class="form-tabs">
+        <button class="form-tab active" onclick="switchTab(this,'type-form')">✍ Type It</button>
+        <button class="form-tab" onclick="switchTab(this,'photo-form')">📷 Photo</button>
+        <button class="form-tab" onclick="switchTab(this,'checklist-tab')">☑ Checklist</button>
+      </div>
+
+      <div id="type-form">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input class="form-input" id="input-title" type="text" placeholder="e.g. Tusk, Inception, Attack on Titan...">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="input-category">
+              <option value="movie">🎬 Movie</option>
+              <option value="series">📺 Web Series</option>
+              <option value="anime">⚡ Anime</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Genre</label>
+            <select class="form-select" id="input-genre">
+              <option>Horror</option>
+              <option>Thriller</option>
+              <option>Action</option>
+              <option>Drama</option>
+              <option>Sci-Fi</option>
+              <option>Comedy</option>
+              <option>Romance</option>
+              <option>Fantasy</option>
+              <option>Mystery</option>
+              <option>Documentary</option>
+              <option>Animation</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Rating</label>
+          <div class="rating-stars" id="star-rating">
+            <span class="star" onclick="setRating(1)">★</span>
+            <span class="star" onclick="setRating(2)">★</span>
+            <span class="star" onclick="setRating(3)">★</span>
+            <span class="star" onclick="setRating(4)">★</span>
+            <span class="star" onclick="setRating(5)">★</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes (optional)</label>
+          <textarea class="form-textarea" id="input-notes" placeholder="What did you think? Any memorable moments?"></textarea>
+        </div>
+        <button class="btn-submit" onclick="logEntry()">→ Add to My Feed</button>
+      </div>
+
+      <div id="photo-form" style="display:none;">
+        <div class="photo-upload" id="photoDropzone">
+          <input type="file" accept="image/*" onchange="handlePhotoUpload(this)">
+          <div class="photo-upload-icon">📸</div>
+          <div class="photo-upload-text">Click or drag a photo of the title screen,<br>poster, or streaming thumbnail</div>
+        </div>
+        <div id="photo-preview" style="margin-top:1rem; display:none;">
+          <img id="preview-img" style="width:100%; max-height:200px; object-fit:cover; border:1px solid var(--border);">
+          <div style="margin-top:1rem;">
+            <label class="form-label">Detected / Confirm Title</label>
+            <input class="form-input" id="photo-title" type="text" placeholder="Confirm or edit title...">
+          </div>
+          <button class="btn-submit" style="margin-top:1rem;" onclick="logPhotoEntry()">→ Add to My Feed</button>
+        </div>
+      </div>
+
+      <div id="checklist-tab" style="display:none;">
+        <div style="margin-bottom:1rem;">
+          <label class="form-label">Quick-tick from your watchlist</label>
+          <p style="font-size:0.8rem; color:var(--muted); line-height:1.5;">Check off what you've just watched. These will be added to your feed with today's date.</p>
+        </div>
+        <div class="checklist" id="watchlist-checklist">
+          <!-- Populated by JS -->
+        </div>
+        <button class="btn-submit" style="margin-top:1.5rem;" onclick="logChecked()">→ Mark as Watched</button>
+      </div>
+    </div>
+
+    <!-- Quick add sidebar -->
+    <div class="quick-add">
+      <div>
+        <div class="quick-add-title">How It Works</div>
+        <p class="quick-add-sub">Three ways to log what you watch — type a title, snap a photo, or tick off from your personal watchlist. Every entry joins your feed and builds your lifetime cinema record.</p>
+      </div>
+
+      <div style="background:var(--bg3); border:1px solid var(--border); padding:1.5rem;">
+        <div class="section-eyebrow" style="margin-bottom:1rem;">Add to Watchlist</div>
+        <div style="display:flex; gap:0.5rem;">
+          <input class="form-input" id="watchlist-input" placeholder="Add a title to watch later..." style="flex:1;">
+          <button class="btn-log" onclick="addToWatchlist()">+</button>
+        </div>
+        <div id="watchlist-preview" style="margin-top:1rem; display:flex; flex-direction:column; gap:0;"></div>
+      </div>
+
+      <div style="background:var(--bg3); border:1px solid var(--border); padding:1.5rem;">
+        <div class="section-eyebrow" style="margin-bottom:1rem;">Categories</div>
+        <div style="display:flex; flex-direction:column; gap:0.7rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.5rem 0; border-bottom:1px solid var(--border);">
+            <span style="font-size:0.85rem; color:var(--cream);">🎬 Movies</span>
+            <span class="stat-num" id="cat-movie" style="font-size:1.2rem;">0</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.5rem 0; border-bottom:1px solid var(--border);">
+            <span style="font-size:0.85rem; color:var(--cream);">📺 Web Series</span>
+            <span class="stat-num" id="cat-series" style="font-size:1.2rem;">0</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.5rem 0;">
+            <span style="font-size:0.85rem; color:var(--cream);">⚡ Anime</span>
+            <span class="stat-num" id="cat-anime" style="font-size:1.2rem;">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEED -->
+<section class="feed-section" id="feed-section">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">What you've watched</div>
+      <h2 class="section-title">Your Feed</h2>
+    </div>
+  </div>
+  <div class="feed-filters">
+    <button class="filter-btn active" onclick="filterFeed('all', this)">All</button>
+    <button class="filter-btn" onclick="filterFeed('movie', this)">Movies</button>
+    <button class="filter-btn" onclick="filterFeed('series', this)">Web Series</button>
+    <button class="filter-btn" onclick="filterFeed('anime', this)">Anime</button>
+  </div>
+  <div class="feed-grid" id="feed-grid">
+    <!-- Populated by JS -->
+  </div>
+  <div id="empty-feed" style="text-align:center; padding:5rem 0; color:var(--muted);">
+    <div style="font-size:3rem; margin-bottom:1rem; opacity:0.3;">🎬</div>
+    <div style="font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem;">No entries yet</div>
+    <div style="font-size:0.85rem;">Start logging what you watch to build your feed</div>
+  </div>
+</section>
+
+<!-- MEMORIES -->
+<section class="memories-section" id="memories">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">Your watching history at a glance</div>
+      <h2 class="section-title">Memories &amp; Insights</h2>
+    </div>
+  </div>
+  <div class="memories-grid">
+    <!-- Total watched -->
+    <div class="memory-block memory-block-large">
+      <div class="memory-label">Total Watched</div>
+      <div class="memory-big-num" id="mem-total">0</div>
+      <div class="memory-desc">Titles logged across all categories since you started tracking</div>
+      <div class="memory-bar-chart" id="genre-bars"></div>
+    </div>
+    <!-- Category split -->
+    <div class="memory-block">
+      <div class="memory-label">This Month</div>
+      <div class="memory-big-num" id="mem-this-month" style="font-size:2.5rem;">0</div>
+      <div class="memory-desc">Titles this month</div>
+      <div class="genre-pills" id="top-genres"></div>
+    </div>
+    <!-- Recent -->
+    <div class="memory-block">
+      <div class="memory-label">Recently Logged</div>
+      <div class="memory-recent-list" id="recent-list">
+        <div style="font-size:0.8rem; color:var(--muted);">Nothing logged yet</div>
+      </div>
+    </div>
+    <!-- Average rating -->
+    <div class="memory-block">
+      <div class="memory-label">Avg. Rating</div>
+      <div class="memory-big-num" id="mem-avg-rating" style="font-size:2.5rem; color:var(--gold);">—</div>
+      <div class="memory-desc">Based on your ratings</div>
+    </div>
+    <!-- Fav genre -->
+    <div class="memory-block">
+      <div class="memory-label">Top Genre</div>
+      <div class="memory-big-num" id="mem-top-genre" style="font-size:1.2rem; margin-top:0.5rem; color:var(--gold); font-family:'DM Mono',monospace; letter-spacing:0.1em;">—</div>
+      <div class="memory-desc" style="margin-top:0.5rem;">Your most watched genre</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Reelmark</div>
+  <div class="footer-coming-soon">🎮 <span>Gaming</span> &amp; other categories — coming soon</div>
+  <div class="footer-copy">© 2025 Reelmark</div>
+</footer>
+
+<!-- LOG MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Log Today's Watch</div>
+    <p class="modal-sub">What did you watch today? Add it to your permanent record.</p>
+    <div class="form-group">
+      <label class="form-label">Title</label>
+      <input class="form-input" id="modal-title" type="text" placeholder="e.g. Tusk (2014)...">
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="modal-category">
+          <option value="movie">🎬 Movie</option>
+          <option value="series">📺 Web Series</option>
+          <option value="anime">⚡ Anime</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Genre</label>
+        <select class="form-select" id="modal-genre">
+          <option>Horror</option><option>Thriller</option><option>Action</option>
+          <option>Drama</option><option>Sci-Fi</option><option>Comedy</option>
+          <option>Romance</option><option>Fantasy</option><option>Mystery</option>
+          <option>Documentary</option><option>Animation</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Rating</label>
+      <div class="rating-stars" id="modal-star-rating">
+        <span class="star" onclick="setModalRating(1)">★</span>
+        <span class="star" onclick="setModalRating(2)">★</span>
+        <span class="star" onclick="setModalRating(3)">★</span>
+        <span class="star" onclick="setModalRating(4)">★</span>
+        <span class="star" onclick="setModalRating(5)">★</span>
+      </div>
+    </div>
+    <button class="btn-submit" onclick="logModalEntry()">→ Add to My Feed</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon">✓</div>
+  <div class="toast-text">
+    <div class="toast-title">Logged!</div>
+    <div id="toast-msg"></div>
+  </div>
+</div>
+
+<script>
+// ======== STATE ========
+let entries = JSON.parse(localStorage.getItem('reelmark_entries') || '[]');
+let watchlist = JSON.parse(localStorage.getItem('reelmark_watchlist') || '[]');
+let currentRating = 0;
+let modalRating = 0;
+let currentFilter = 'all';
+
+// ======== FILM STRIP DEMO DATA ========
+const demoFilms = [
+  {title: 'Oppenheimer', year: '2023', type: 'movie', icon: '☢️'},
+  {title: 'Attack on Titan', year: '2023', type: 'anime', icon: '⚡'},
+  {title: 'The Bear', year: '2023', type: 'series', icon: '🔪'},
+  {title: 'Inception', year: '2010', type: 'movie', icon: '🌀'},
+  {title: 'Death Note', year: '2006', type: 'anime', icon: '📓'},
+  {title: 'Stranger Things', year: '2022', type: 'series', icon: '🔦'},
+  {title: 'Dune', year: '2021', type: 'movie', icon: '🏜️'},
+  {title: 'Jujutsu Kaisen', year: '2023', type: 'anime', icon: '👊'},
+  {title: 'Severance', year: '2022', type: 'series', icon: '🏢'},
+  {title: 'Parasite', year: '2019', type: 'movie', icon: '🏠'},
+  {title: 'Vinland Saga', year: '2019', type: 'anime', icon: '⚔️'},
+  {title: 'The Last of Us', year: '2023', type: 'series', icon: '🍄'},
+  {title: 'Tusk', year: '2014', type: 'movie', icon: '🦭'},
+  {title: 'Interstellar', year: '2014', type: 'movie', icon: '🌌'},
+  {title: 'Cowboy Bebop', year: '1998', type: 'anime', icon: '🚀'},
+  {title: 'Breaking Bad', year: '2008', type: 'series', icon: '⚗️'},
+];
+
+function buildFilmStrip() {
+  const strip = document.getElementById('filmStrip');
+  const allFilms = [...demoFilms, ...demoFilms]; // double for seamless loop
+  let html = '';
+  for (let row = 0; row < 4; row++) {
+    html += '<div class="film-strip-row">';
+    const offset = row * 3;
+    for (let i = 0; i < allFilms.length; i++) {
+      const f = allFilms[(i + offset) % allFilms.length];
+      const badgeClass = f.type === 'movie' ? 'badge-movie' : f.type === 'series' ? 'badge-series' : 'badge-anime';
+      const badgeLabel = f.type === 'movie' ? 'Film' : f.type === 'series' ? 'Series' : 'Anime';
+      html += `<div class="film-card">
+        <div class="film-card-inner">
+          <div class="film-card-bg">${f.icon}</div>
+          <span class="film-card-badge ${badgeClass}">${badgeLabel}</span>
+          <div class="film-card-title">${f.title}</div>
+          <div class="film-card-year">${f.year}</div>
+        </div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  strip.innerHTML = html;
+}
+
+// ======== RATING ========
+function setRating(n) {
+  currentRating = n;
+  document.querySelectorAll('#star-rating .star').forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+  });
+}
+
+function setModalRating(n) {
+  modalRating = n;
+  document.querySelectorAll('#modal-star-rating .star').forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+  });
+}
+
+// ======== TABS ========
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['type-form','photo-form','checklist-tab'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById(tabId).style.display = 'block';
+  if (tabId === 'checklist-tab') renderChecklist();
+}
+
+// ======== LOG ENTRY ========
+function logEntry() {
+  const title = document.getElementById('input-title').value.trim();
+  if (!title) { alert('Please enter a title.'); return; }
+  const entry = {
+    id: Date.now(),
+    title,
+    category: document.getElementById('input-category').value,
+    genre: document.getElementById('input-genre').value,
+    rating: currentRating,
+    notes: document.getElementById('input-notes').value.trim(),
+    date: new Date().toISOString()
+  };
+  addEntry(entry);
+  document.getElementById('input-title').value = '';
+  document.getElementById('input-notes').value = '';
+  currentRating = 0;
+  document.querySelectorAll('#star-rating .star').forEach(s => s.classList.remove('active'));
+  showToast(`"${title}" added to your feed!`);
+}
+
+function logModalEntry() {
+  const title = document.getElementById('modal-title').value.trim();
+  if (!title) { alert('Please enter a title.'); return; }
+  const entry = {
+    id: Date.now(),
+    title,
+    category: document.getElementById('modal-category').value,
+    genre: document.getElementById('modal-genre').value,
+    rating: modalRating,
+    notes: '',
+    date: new Date().toISOString()
+  };
+  addEntry(entry);
+  document.getElementById('modal-title').value = '';
+  modalRating = 0;
+  document.querySelectorAll('#modal-star-rating .star').forEach(s => s.classList.remove('active'));
+  closeModal();
+  showToast(`"${title}" added to your feed!`);
+}
+
+function logPhotoEntry() {
+  const title = document.getElementById('photo-title').value.trim();
+  if (!title) { alert('Please confirm the title.'); return; }
+  const entry = {
+    id: Date.now(),
+    title,
+    category: 'movie',
+    genre: 'Other',
+    rating: 0,
+    notes: 'Added via photo',
+    date: new Date().toISOString()
+  };
+  addEntry(entry);
+  document.getElementById('photo-preview').style.display = 'none';
+  document.getElementById('photo-title').value = '';
+  showToast(`"${title}" added via photo!`);
+}
+
+function addEntry(entry) {
+  entries.unshift(entry);
+  localStorage.setItem('reelmark_entries', JSON.stringify(entries));
+  renderFeed();
+  updateStats();
+  updateMemories();
+}
+
+// ======== PHOTO ========
+function handlePhotoUpload(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('preview-img').src = e.target.result;
+    document.getElementById('photo-preview').style.display = 'block';
+    // Simulate title extraction
+    const file = input.files[0];
+    const guessedTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+    document.getElementById('photo-title').value = guessedTitle.charAt(0).toUpperCase() + guessedTitle.slice(1);
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ======== WATCHLIST ========
+function addToWatchlist() {
+  const val = document.getElementById('watchlist-input').value.trim();
+  if (!val) return;
+  if (!watchlist.find(w => w.title.toLowerCase() === val.toLowerCase())) {
+    watchlist.push({ title: val, id: Date.now() });
+    localStorage.setItem('reelmark_watchlist', JSON.stringify(watchlist));
+    document.getElementById('watchlist-input').value = '';
+    renderWatchlistPreview();
+  }
+}
+
+function renderWatchlistPreview() {
+  const el = document.getElementById('watchlist-preview');
+  el.innerHTML = watchlist.slice(0, 4).map(w => `
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--border);">
+      <span style="font-size:0.82rem; color:var(--cream);">${w.title}</span>
+      <button onclick="removeFromWatchlist(${w.id})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.8rem;" title="Remove">✕</button>
+    </div>
+  `).join('');
+  if (watchlist.length > 4) {
+    el.innerHTML += `<div style="font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--muted); padding-top:0.5rem; text-align:center;">+${watchlist.length - 4} more in checklist</div>`;
+  }
+}
+
+function removeFromWatchlist(id) {
+  watchlist = watchlist.filter(w => w.id !== id);
+  localStorage.setItem('reelmark_watchlist', JSON.stringify(watchlist));
+  renderWatchlistPreview();
+}
+
+function renderChecklist() {
+  const el = document.getElementById('watchlist-checklist');
+  if (watchlist.length === 0) {
+    el.innerHTML = '<div style="padding:1rem; font-size:0.82rem; color:var(--muted); text-align:center;">Add items to your watchlist first →</div>';
+    return;
+  }
+  el.innerHTML = watchlist.map(w => `
+    <div class="checklist-item" id="cl-${w.id}" onclick="toggleCheck(${w.id})">
+      <div class="check-box" id="cb-${w.id}"></div>
+      <div class="checklist-info">
+        <div class="checklist-name">${w.title}</div>
+        <div class="checklist-meta"><span>Added to watchlist</span></div>
+      </div>
+      <span class="checklist-type badge-movie" style="font-family:'DM Mono',monospace; font-size:0.55rem; padding:2px 8px;">Film</span>
+    </div>
+  `).join('');
+}
+
+const checkedIds = new Set();
+
+function toggleCheck(id) {
+  const item = document.getElementById(`cl-${id}`);
+  const cb = document.getElementById(`cb-${id}`);
+  if (checkedIds.has(id)) {
+    checkedIds.delete(id);
+    item.classList.remove('checked');
+    cb.innerHTML = '';
+  } else {
+    checkedIds.add(id);
+    item.classList.add('checked');
+    cb.innerHTML = '✓';
+  }
+}
+
+function logChecked() {
+  if (checkedIds.size === 0) { alert('Check at least one title.'); return; }
+  checkedIds.forEach(id => {
+    const w = watchlist.find(x => x.id === id);
+    if (w) {
+      addEntry({ id: Date.now() + Math.random(), title: w.title, category: 'movie', genre: 'Other', rating: 0, notes: '', date: new Date().toISOString() });
+    }
+  });
+  watchlist = watchlist.filter(w => !checkedIds.has(w.id));
+  localStorage.setItem('reelmark_watchlist', JSON.stringify(watchlist));
+  checkedIds.clear();
+  renderWatchlistPreview();
+  showToast(`${checkedIds.size || 'Selected'} titles marked as watched!`);
+}
+
+// ======== FEED ========
+const catIcons = { movie: '🎬', series: '📺', anime: '⚡' };
+const catColors = { movie: '#c0392b', series: '#1a5276', anime: '#7d3c98' };
+const catLabels = { movie: 'Film', series: 'Series', anime: 'Anime' };
+
+function renderFeed() {
+  const grid = document.getElementById('feed-grid');
+  const empty = document.getElementById('empty-feed');
+  const filtered = currentFilter === 'all' ? entries : entries.filter(e => e.category === currentFilter);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  grid.innerHTML = filtered.map(e => {
+    const stars = e.rating ? '★'.repeat(e.rating) + '☆'.repeat(5 - e.rating) : '';
+    const d = new Date(e.date);
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return `<div class="feed-item">
+      <div class="feed-item-bg">${catIcons[e.category] || '🎬'}</div>
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg, ${catColors[e.category]}22, transparent);"></div>
+      <div class="feed-item-overlay">
+        <div class="feed-item-date">${dateStr}</div>
+        <div class="feed-item-title">${e.title}</div>
+        <div class="feed-item-meta">
+          ${stars ? `<div class="feed-item-stars">${stars}</div>` : ''}
+          <span class="feed-item-type" style="background:${catColors[e.category]}; color:white;">${catLabels[e.category]}</span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.58rem; color:var(--muted);">${e.genre}</span>
+        </div>
+        ${e.notes ? `<div class="feed-hover-note">${e.notes}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterFeed(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFeed();
+}
+
+// ======== STATS ========
+function updateStats() {
+  document.getElementById('total-watched').textContent = entries.length;
+  document.getElementById('total-hours').textContent = Math.round(entries.length * 1.8);
+  const genres = [...new Set(entries.map(e => e.genre))];
+  document.getElementById('total-genres').textContent = genres.length;
+  document.getElementById('cat-movie').textContent = entries.filter(e => e.category === 'movie').length;
+  document.getElementById('cat-series').textContent = entries.filter(e => e.category === 'series').length;
+  document.getElementById('cat-anime').textContent = entries.filter(e => e.category === 'anime').length;
+}
+
+function updateMemories() {
+  document.getElementById('mem-total').textContent = entries.length;
+
+  const now = new Date();
+  const thisMonth = entries.filter(e => {
+    const d = new Date(e.date);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  document.getElementById('mem-this-month').textContent = thisMonth.length;
+
+  const rated = entries.filter(e => e.rating > 0);
+  if (rated.length > 0) {
+    const avg = (rated.reduce((a, e) => a + e.rating, 0) / rated.length).toFixed(1);
+    document.getElementById('mem-avg-rating').textContent = avg + '★';
+  }
+
+  // Genre count bars
+  const genreCounts = {};
+  entries.forEach(e => { genreCounts[e.genre] = (genreCounts[e.genre] || 0) + 1; });
+  const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
+
+  if (sortedGenres.length > 0) {
+    document.getElementById('mem-top-genre').textContent = sortedGenres[0][0].toUpperCase();
+  }
+
+  const maxCount = sortedGenres[0]?.[1] || 1;
+  document.getElementById('genre-bars').innerHTML = sortedGenres.slice(0, 6).map(([genre, count]) => `
+    <div class="bar-row">
+      <div class="bar-label">${genre}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(count/maxCount*100)}%"></div></div>
+      <div class="bar-count">${count}</div>
+    </div>
+  `).join('');
+
+  // Recent list
+  const recent = entries.slice(0, 5);
+  document.getElementById('recent-list').innerHTML = recent.length === 0
+    ? '<div style="font-size:0.8rem; color:var(--muted);">Nothing logged yet</div>'
+    : recent.map(e => `
+      <div class="memory-recent-item">
+        <div class="memory-dot" style="background:${catColors[e.category]}"></div>
+        <div>
+          <div class="memory-recent-title">${e.title}</div>
+          <div class="memory-recent-date">${new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · ${catLabels[e.category]}</div>
+        </div>
+      </div>
+    `).join('');
+
+  // Top genres pills
+  document.getElementById('top-genres').innerHTML = sortedGenres.slice(0, 5).map(([g, c], i) =>
+    `<span class="genre-pill ${i === 0 ? 'top' : ''}">${g}</span>`
+  ).join('');
+}
+
+// ======== MODAL ========
+function openModal() { document.getElementById('modal').classList.add('open'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
+
+// ======== TOAST ========
+function showToast(msg) {
+  document.getElementById('toast-msg').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ======== INIT ========
+buildFilmStrip();
+renderFeed();
+renderWatchlistPreview();
+updateStats();
+updateMemories();
+
+// Enter key support
+document.getElementById('watchlist-input').addEventListener('keydown', e => { if (e.key === 'Enter') addToWatchlist(); });
+document.getElementById('input-title').addEventListener('keydown', e => { if (e.key === 'Enter') logEntry(); });
+document.getElementById('modal-title').addEventListener('keydown', e => { if (e.key === 'Enter') logModalEntry(); });
+</script>
+</body>
+</html>
